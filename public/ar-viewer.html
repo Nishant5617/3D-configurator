@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AR Viewer</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <model-viewer
+    id="arModel"
+    alt="3D furniture"
+    ar
+    ar-modes="scene-viewer quick-look webxr"
+    camera-controls
+    autoplay
+    exposure="1"
+    shadow-intensity="1"
+    environment-image="neutral"
+  ></model-viewer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const model = urlParams.get('model') || 'default.glb';
+
+    // Build proper path based on folder structure
+    const fullPath = `/models/${model}`;
+    
+    document.getElementById('arModel').src = fullPath;
+  </script>
+</body>
+</html>

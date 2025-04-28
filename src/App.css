@@ -1,0 +1,246 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  body {
+    background-color: #f5f5f5;
+  }
+  
+  /* Layout */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .header p {
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  /* Viewer Section */
+  .viewer-container {
+    flex: 1.5;
+    position: relative;
+    height: 700px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  /* Ensure Canvas fills the viewer */
+  .viewer-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    outline: none;
+  }
+  
+  /* Overlaid Controls */
+  .control-buttons {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+  
+  .control-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+  
+  .control-btn:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .ar-view-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+  
+  .ar-view-btn:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* Config Panel */
+  .config-container {
+    flex: 1;
+    min-width: 320px;
+    max-height: 700px;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Dropdown Styling */
+  .config-container select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  /* Dimension Labels */
+  .dimension-label {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid #333 !important;
+    padding: 3px 6px !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  /* QR Code Modal */
+  .qr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .qr-popup {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  .qr-popup .qr-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .qr-code-wrapper svg {
+    width: 320px !important;
+    height: 320px !important;
+  }
+  
+  /* Responsive Tweaks */
+  @media (max-width: 768px) {
+    .content-wrapper {
+      flex-direction: column;
+    }
+  
+    .viewer-container {
+      height: 400px;
+    }
+  
+    .config-container {
+      max-height: none;
+    }
+  
+    .ar-view-btn {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  
+    .control-btn {
+      width: 28px;
+      height: 28px;
+    }
+  }
+  .canvas-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 10;
+  }
+  
+  .control-button {
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .control-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+  
+  .control-button svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* For tooltip functionality */
+  .control-button[title]:hover:after {
+    content: attr(title);
+    position: absolute;
+    bottom: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }

@@ -1,0 +1,565 @@
+// import { useState, useEffect, useRef } from 'react';
+// import * as THREE from 'three';
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import './App.css';
+
+// // Custom icon components
+// const ExpandIcon = () => (
+//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//     <path d="M15 3h6v6"></path>
+//     <path d="M9 21H3v-6"></path>
+//     <path d="M21 3l-7 7"></path>
+//     <path d="M3 21l7-7"></path>
+//   </svg>
+// );
+
+// const ZoomInIcon = () => (
+//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//     <circle cx="11" cy="11" r="8"></circle>
+//     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+//     <line x1="11" y1="8" x2="11" y2="14"></line>
+//     <line x1="8" y1="11" x2="14" y2="11"></line>
+//   </svg>
+// );
+
+// const RotateCcwIcon = () => (
+//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//     <path d="M3 2v6h6"></path>
+//     <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
+//   </svg>
+// );
+
+// const MaximizeIcon = () => (
+//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//     <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+//     <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+//     <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+//     <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+//   </svg>
+// );
+
+// const ChevronDownIcon = () => (
+//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+//     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+//   </svg>
+// );
+
+
+
+// function App() {
+//   const [selectedSize, setSelectedSize] = useState('Single Drawer');
+//   const [woodFinish, setWoodFinish] = useState('Cafelle');
+//   const [handleType, setHandleType] = useState('Handle 1');
+//   const [handleFinish, setHandleFinish] = useState('Antique English');
+//   const [legOption, setLegOption] = useState('Leg A');
+//   const [showSizeOptions, setShowSizeOptions] = useState(false);
+//   const [showWoodFinishOptions, setShowWoodFinishOptions] = useState(false);
+  
+//   // References for 3D viewer
+//   const viewerRef = useRef(null);
+//   const sceneRef = useRef(null);
+//   const cameraRef = useRef(null);
+//   const rendererRef = useRef(null);
+//   const controlsRef = useRef(null);
+//   const currentModelRef = useRef(null);
+//   const textureLoaderRef = useRef(new THREE.TextureLoader());
+  
+//   // GLB model paths for furniture options with image thumbnails
+//   const furnitureOptions = [
+//     { id: 'single-drawer', name: 'Single Drawer', image: "/api/placeholder/80/80", modelPath: '565/565-01/565-01.glb' },
+//     { id: 'three-drawer', name: 'Three Drawer', image: "/api/placeholder/80/80", modelPath: '565/565-02/565-02.glb' },
+//     { id: 'chest', name: 'Chest', image: "/api/placeholder/80/80", modelPath: '565/565-03/565-03.glb' },
+//     { id: 'single-wardrobe', name: 'Single Wardrobe', image: "/api/placeholder/80/80", modelPath: '565/565-04/565-04.glb' },
+//     { id: 'double-wardrobe', name: 'Double Wardrobe', image: "/api/placeholder/80/80", modelPath: '565/565-05/565-05.glb' },
+//     { id: 'footboard', name: 'Footboard', image: "/api/placeholder/80/80", modelPath: '565/565-06/565-06.glb' },
+//     { id: 'headboard', name: 'Headboard', image: "/api/placeholder/80/80", modelPath: 'models/headboard.glb' },
+//   ];
+  
+//   // Updated wood finish options with texture images
+//   const woodFinishOptions = [
+//     { id: 'cafelle', name: 'Cafelle', color: '#362617', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Cafelle.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'amber', name: 'Amber', color: '#8B5A2B', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Amber.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'bitmore', name: 'Bitmore', color: '#4A2511', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Bitmore.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'brighton', name: 'Brighton', color: '#352315', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Brighton.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'cocoballa', name: 'Cocoballa', color: '#3D2B1F', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Cocoballa.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'columbian', name: 'columbian', color: '#4F3222', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Columbian.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'empire', name: 'empire', color: '#462913', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Empire.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'fonthill', name: 'fonthill', color: '#A16C38', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Fonthill.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'macadamia', name: 'macadamia', color: '#9C8E7B', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Macadamia Nut.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'naturalash', name: 'naturalash', color: '#E5D7B7', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Natural Ash.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'reya', name: 'reya', color: '#5B5B40', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Raya.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'rivercherry', name: 'rivercherry', color: '#B68E5B', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/River Cherry.png',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'studioteak', name: 'studioteak', color: '#6A6D56', texturePath: 'textures/grey-green.jpg',roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png' },
+//     { id: 'whitecypress', name: 'white cypress', color: '#D3C9B6', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/White Cypress.png', roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png'},
+//     { id: 'williamsburg', name: 'williamsburg', color: '#4D2C19', texturePath: 'configurator/public/565/565-01/Varients/WOOD LAMINATE FINISHES/Williamsburg.png' , roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png'},
+//     { id: 'windsor', name: 'windsor', color: '#95432F', texturePath: '565/565-01/Varients/WOOD LAMINATE FINISHES/Windsor.png' , roughnessTexturePath:  '565/565-01/Varients/565 Single drawer Roughness.png'},
+//   ];
+//   const [showHandleOptions, setShowHandleOptions] = useState(false);
+
+//   // Add these handle options to your component
+//   const handleOptions = [
+//     { id: 'handle-1', name: 'Handle 1', image: "/api/placeholder/80/80",modelPath: '565/565-05/handle/565-05 Hardware 1.glb' },
+//     { id: 'handle-2', name: 'Handle 2', image: "/api/placeholder/80/80",modelPath: '565/565-05/handle/565-05 Hardware 2.glb' },
+//     { id: 'handle-3', name: 'Handle 3', image: "/api/placeholder/80/80",modelPath: '565/565-05/handle/565-05 Hardware 3.glb' },
+//     { id: 'handle-4', name: 'Handle 4', image: "/api/placeholder/80/80",modelPath: '565/565-05/handle/565-05 Hardware 4.glb' },
+//     { id: 'handle-5', name: 'Handle 5', image: "/api/placeholder/80/80",modelPath: '565/565-05/handle/565-05 Hardware 5.glb' },
+//   ];
+
+//   const handleFinishOptions = [
+//     { id: 'antique-english', name: 'Antique English', color: '#704214', image: "/api/placeholder/40/40" },
+//     { id: 'brushed-nickel', name: 'Brushed Nickel', color: '#C0C0C0', image: "/api/placeholder/40/40" },
+//     { id: 'oil-rubbed-bronze', name: 'Oil Rubbed Bronze', color: '#352A20', image: "/api/placeholder/40/40" },
+//     { id: 'polished-chrome', name: 'Polished Chrome', color: '#E8E8E8', image: "/api/placeholder/40/40" },
+//   ];
+//   // Initialize 3D scene
+//   useEffect(() => {
+//     if (!viewerRef.current) return;
+    
+//     // Set up scene
+//     const scene = new THREE.Scene();
+//     scene.background = new THREE.Color(0xf5f5f5);
+//     sceneRef.current = scene;
+    
+//     // Set up camera
+//     const camera = new THREE.PerspectiveCamera(
+//       45, 
+//       viewerRef.current.clientWidth / viewerRef.current.clientHeight, 
+//       0.1, 
+//       1000
+//     );
+
+    
+//     camera.position.z = 5;
+//     cameraRef.current = camera;
+    
+//     // Set up renderer
+//     const renderer = new THREE.WebGLRenderer({ antialias: true });
+//     renderer.setSize(viewerRef.current.clientWidth, viewerRef.current.clientHeight);
+//     renderer.setPixelRatio(window.devicePixelRatio);
+//     viewerRef.current.innerHTML = '';
+//     viewerRef.current.appendChild(renderer.domElement);
+//     rendererRef.current = renderer;
+    
+//     // Add lighting
+//     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+//     scene.add(ambientLight);
+    
+//     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+//     directionalLight.position.set(5, 10, 7);
+//     scene.add(directionalLight);
+    
+//     // Add orbit controls
+//     const controls = new OrbitControls(camera, renderer.domElement);
+//     controls.enableDamping = true;
+//     controls.dampingFactor = 0.1;
+//     controls.enableZoom = true;
+//     controls.enablePan = false;
+//     controlsRef.current = controls;
+    
+//     // Animation loop
+//     const animate = () => {
+//       requestAnimationFrame(animate);
+      
+//       if (controlsRef.current) {
+//         controlsRef.current.update();
+//       }
+      
+//       renderer.render(scene, camera);
+//     };
+    
+//     animate();
+    
+//     // Handle resize
+//     const handleResize = () => {
+//       if (!viewerRef.current || !cameraRef.current || !rendererRef.current) return;
+      
+//       cameraRef.current.aspect = viewerRef.current.clientWidth / viewerRef.current.clientHeight;
+//       cameraRef.current.updateProjectionMatrix();
+      
+//       rendererRef.current.setSize(viewerRef.current.clientWidth, viewerRef.current.clientHeight);
+//     };
+    
+//     window.addEventListener('resize', handleResize);
+    
+//     return () => {
+//       window.removeEventListener('resize', handleResize);
+      
+//       if (rendererRef.current && rendererRef.current.domElement) {
+//         viewerRef.current?.removeChild(rendererRef.current.domElement);
+//       }
+      
+//       if (rendererRef.current) {
+//         rendererRef.current.dispose();
+//       }
+//     };
+//   }, []);
+
+
+
+
+
+//   const applyWoodTexture = (model, textureOption) => {
+//     return new Promise((resolve) => {
+//       if (!model) {
+//         resolve();
+//         return;
+//       }
+  
+//       // Load the main texture
+//       textureLoaderRef.current.load(
+//         textureOption.texturePath,
+//         (texture) => {
+//           // Configure texture properties for wood
+//           texture.wrapS = THREE.RepeatWrapping;
+//           texture.wrapT = THREE.RepeatWrapping;
+//           texture.flipY=false;
+//           texture.repeat.set(1, 1);
+          
+  
+//           // Load the roughness texture
+//           textureLoaderRef.current.load(
+//             textureOption.roughnessTexturePath,
+//             (roughnessTexture) => {
+//               roughnessTexture.wrapS = THREE.RepeatWrapping;
+//               roughnessTexture.wrapT = THREE.RepeatWrapping;
+//               roughnessTexture.flipY=false;
+//               roughnessTexture.repeat.set(1, 1);
+  
+//               // Apply the texture to all meshes in the model
+//               model.traverse((object) => {
+//                 if (object.isMesh) {
+//                   // Create a new material with the texture and roughness map
+//                   const newMaterial = new THREE.MeshStandardMaterial({
+//                     map: texture,
+//                     roughnessMap: roughnessTexture, // Add roughness map here
+//                     color: new THREE.Color(textureOption.color),
+//                     roughness: 0.7,
+//                     metalness: 0.1,
+                    
+//                   });
+//                   console.log(newMaterial) 
+//                   // Apply the new material
+//                   object.material = newMaterial;
+//                 }
+//               });
+  
+//               resolve();
+//             },
+//             undefined,
+//             (error) => {
+//               console.error('Error loading roughness texture:', error);
+//               resolve();
+//             }
+//           );
+//         },
+//         undefined,
+//         (error) => {
+//           console.error('Error loading texture:', error);
+//           model.traverse((object) => {
+//             if (object.isMesh) {
+//               object.material.color.set(textureOption.color);
+//             }
+//           });
+//           resolve();
+//         }
+//       );
+//     });
+//   };
+  
+//   const loadAndPositionHandle = (modelPath) => {
+//   return new Promise((resolve, reject) => {
+//     const loader = new GLTFLoader();
+//     loader.load(
+//       modelPath,
+//       (gltf) => {
+//         const handleModel = gltf.scene;
+        
+//         // Apply handle finish color
+//         const selectedHandleFinish = handleFinishOptions.find(option => option.name === handleFinish);
+//         if (selectedHandleFinish) {
+//           handleModel.traverse((object) => {
+//             if (object.isMesh) {
+//               object.material = new THREE.MeshStandardMaterial({
+//                 color: new THREE.Color(selectedHandleFinish.color),
+//                 metalness: 0.8,
+//                 roughness: 0.2,
+//               });
+//             }
+//           });
+//         }
+        
+//         resolve(handleModel);
+//       },
+//       undefined,
+//       (error) => {
+//         console.error('Error loading handle model:', error);
+//         reject(error);
+//       }
+//     );
+//   });
+// };
+  
+  
+//   // Load model when size changes
+//   useEffect(() => {
+//     if (!sceneRef.current) return;
+    
+//     const selectedOption = furnitureOptions.find(option => option.name === selectedSize);
+    
+//     if (!selectedOption) return;
+    
+//     const loader = new GLTFLoader();
+//     loader.load(
+//       selectedOption.modelPath,
+//       (gltf) => {
+//         // Remove previous model
+//         if (currentModelRef.current) {
+//           sceneRef.current.remove(currentModelRef.current);
+//         }
+        
+//         const model = gltf.scene;
+
+//      const loadAndPositionHandle = (modelPath) => {
+//       return new Promise((resolve, reject) => {
+//        const loader = new GLTFLoader();
+//       loader.load(
+//         modelPath,
+//         (gltf) => {
+//           const handleModel = gltf.scene;
+        
+//         // Apply handle finish color
+//         const selectedHandleFinish = handleFinishOptions.find(option => option.name === handleFinish);
+//         if (selectedHandleFinish) {
+//           handleModel.traverse((object) => {
+//             if (object.isMesh) {
+//               object.material = new THREE.MeshStandardMaterial({
+//                 color: new THREE.Color(selectedHandleFinish.color),
+//                 metalness: 0.8,
+//                 roughness: 0.2,
+//               });
+//             }
+//           });
+//         }
+        
+//         resolve(handleModel);
+//       },
+//       undefined,
+//       (error) => {
+//         console.error('Error loading handle model:', error);
+//         reject(error);
+//       }
+//     );
+//   });
+// };
+        
+//         // Auto-center and scale model
+//         const box = new THREE.Box3().setFromObject(model);
+//         const center = box.getCenter(new THREE.Vector3());
+//         const size = box.getSize(new THREE.Vector3());
+//         const maxDim = Math.max(size.x, size.y, size.z);
+//         const scale = 2 / maxDim;
+        
+//         model.position.sub(center);
+//         model.position.y = -1.5;
+//         model.scale.multiplyScalar(scale);
+        
+//         // Add to scene first
+//         sceneRef.current.add(model);
+//         currentModelRef.current = model;
+        
+//         // Reset camera position
+//         if (cameraRef.current) {
+//           cameraRef.current.position.z = 5;
+//         }
+        
+//         // Reset controls
+//         if (controlsRef.current) {
+//           controlsRef.current.reset();
+//         }
+        
+//         // Apply the current wood finish texture to the newly loaded model
+//         const selectedWoodFinish = woodFinishOptions.find(option => option.name === woodFinish);
+//         if (selectedWoodFinish) {
+//           applyWoodTexture(model, selectedWoodFinish);
+//         }
+//       },
+//       undefined,
+//       (error) => {
+//         console.error('Error loading model:', error);
+//       }
+//     );
+//   }, [selectedSize]);
+  
+//   // Apply wood finish texture when it changes
+//   useEffect(() => {
+//     if (!sceneRef.current || !currentModelRef.current) return;
+    
+//     const selectedWoodFinish = woodFinishOptions.find(option => option.name === woodFinish);
+//     if (selectedWoodFinish && currentModelRef.current) {
+//       applyWoodTexture(currentModelRef.current, selectedWoodFinish)
+//         .then(() => {
+//           console.log(`Applied ${woodFinish} texture to model`);
+//         });
+//     }
+//   }, [woodFinish]);
+  
+//   // Function to toggle size options visibility
+//   const toggleSizeOptions = () => {
+//     setShowSizeOptions(!showSizeOptions);
+//     // Close wood finish options when opening size options
+//     if (showWoodFinishOptions) setShowWoodFinishOptions(false);
+//   };
+  
+//   // Function to toggle wood finish options visibility
+//   const toggleWoodFinishOptions = () => {
+//     setShowWoodFinishOptions(!showWoodFinishOptions);
+//     // Close size options when opening wood finish options
+//     if (showSizeOptions) setShowSizeOptions(false);
+//   };
+  
+//   // Function to select size without closing dropdown
+//   const selectSize = (sizeName) => {
+//     setSelectedSize(sizeName);
+//     // We don't close the dropdown now - that's the key change
+//   };
+  
+//   // Function to select wood finish
+//   const selectWoodFinish = (finishName) => {
+//     setWoodFinish(finishName);
+//   };
+
+//   const selectHandleType = (typeName) => {
+//     setHandleType(typeName);
+//   };
+
+//   const toggleHandleOptions = () => {
+//     setShowHandleOptions(!showHandleOptions);
+//     // Close other dropdowns when opening handle options
+//     if (showSizeOptions) setShowSizeOptions(false);
+//     if (showWoodFinishOptions) setShowWoodFinishOptions(false);
+//   };
+
+//   const [showHandleFinishOptions, setShowHandleFinishOptions] = useState(false);
+// const handleModelRef = useRef(null); // Reference for handle model
+  
+//   // Reset camera view
+//   const resetView = () => {
+//     if (controlsRef.current) {
+//       controlsRef.current.reset();
+//     }
+//   };
+  
+//   // Zoom in
+//   const zoomIn = () => {
+//     if (cameraRef.current) {
+//       cameraRef.current.position.z *= 0.8;
+//     }
+//   };
+  
+//   // Full screen
+//   const toggleFullScreen = () => {
+//     if (!document.fullscreenElement) {
+//       viewerRef.current.requestFullscreen().catch(err => {
+//         console.error(`Error attempting full screen: ${err.message}`);
+//       });
+//     } else {
+//       document.exitFullscreen();
+//     }
+//   };
+
+//   return (
+//     <div className="container">
+//       <div className="header">
+//         <h1>3D Product Configurator</h1>
+//         <p>
+//           Real-time 3D customization that brings furniture to life—change colors, materials, and features with ease.
+//         </p>
+//       </div>
+      
+//       <div className="content-wrapper">
+//         {/* Left side - 3D Viewer */}
+//         <div className="viewer-container">
+//           <div className="viewer" ref={viewerRef}>
+//             {/* Three.js canvas will be inserted here */}
+            
+//             {/* Vertical control buttons */}
+//             <div className="control-buttons">
+//               <button className="control-btn" onClick={resetView}>
+//                 <RotateCcwIcon />
+//               </button>
+//               <button className="control-btn" onClick={zoomIn}>
+//                 <ZoomInIcon />
+//               </button>
+//               <button className="control-btn">
+//                 <ExpandIcon />
+//               </button>
+//               <button className="control-btn" onClick={toggleFullScreen}>
+//                 <MaximizeIcon />
+//               </button>
+//             </div>
+            
+//             {/* AR View button */}
+//             <button className="ar-view-btn">
+//               <ExpandIcon />
+//               View in your room
+//             </button>
+//           </div>
+//         </div>
+        
+//         {/* Right side - Configuration Options */}
+//         <div className="config-container">
+//           <div className="config-panel">
+//             <div className="ancestry-section">
+//               <h2>ANCESTRY</h2>
+//               <p>
+//                 With Ancestry Collection the best from generation to generation is carried forward.
+//               </p>
+//             </div>
+            
+//             {/* Size Selection Dropdown */}
+//             <div className="selection-row">
+//               <div className="selection-content" onClick={toggleSizeOptions}>
+//                 <div className="selection-preview">
+//                   <div className="thumbnail-container">
+//                     <img 
+//                       src={furnitureOptions.find(option => option.name === selectedSize)?.image}
+//                       alt={selectedSize}
+//                       className="option-thumbnail"
+//                     />
+//                   </div>
+//                   <div>
+//                     <h3>Select Size</h3>
+//                     <p className="selected-option">{selectedSize}</p>
+//                   </div>
+//                 </div>
+//                 <button className={`dropdown-arrow ${showSizeOptions ? 'open' : ''}`}>
+//                   <ChevronDownIcon />
+//                 </button>
+//               </div>
+//             </div>
+            
+//             {/* Expanded Size Options */}
+//             {showSizeOptions && (
+//               <div className="expanded-options size-options">
+//                 {furnitureOptions.map((option) => (
+//                   <div 
+//                     key={option.id}
+//                     className={`size-option ${selectedSize === option.name ? 'selected' : ''}`}
+//                     onClick={() => selectSize(option.name)}
+//                   >
+//                     <div className="option-thumbnail-container">
+//                       <img 
+//                         src={option.image}
+//                         alt={option.name}
+//                         className={`option-thumbnail ${selectedSize === option.name ? 'selected-thumbnail' : ''}`}
+//                       />
+//                     </div>
+//                     <p>{option.name}</p>
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+            
+            
+//SECTION 1: IMPORTS, COMPONENTS, AND STATE SETUP
